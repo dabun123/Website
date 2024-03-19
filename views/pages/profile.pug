@@ -1,0 +1,192 @@
+doctype html
+html
+  head
+    title My Profile
+    include ../partials/header.pug
+    style.
+      body {
+        background-color: #87CEEB; 
+        font-family: 'Arial', sans-serif; 
+        margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+      #header a {
+        margin-right: 20px;
+      }
+
+      .gallery {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px;
+          justify-content: center;
+          padding: 20px; 
+          margin-top: 50px; 
+      }
+      .artwork-container {
+        width: 300px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        background-color: #f0f0f0;
+        color: black;
+        margin: 50px; 
+      }
+
+      .artwork-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      a {
+        text-align: center;
+        padding: 10px;
+        margin-top: 20px; 
+        display: inline-block;
+      }
+
+      form {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      input {
+        margin-right: 10px;
+      }
+      img{
+        width:50%;
+        height:50%;
+      }
+      label{
+        display: block;
+        margin-bottom: 5px;
+      }
+
+  body
+    .gallery
+      .artwork-container
+        h1 Profile
+        h2 User: #{data.Username}
+        h2 DOB: #{data.DOB}
+        button(type="button", onclick="changeType()") Change Account
+
+      .artwork-container
+        h2 Notifications
+        if(Notifications)
+          each notif in data.Notifcations
+            .artwork-card
+              p notif
+      .artwork-container
+        h2 Liked
+        if(likedArt)
+          each artwork in likedArt
+            .artwork-card
+              a(href=`/artwork/${artwork._id}`)
+                img(src=artwork.Poster, alt=artwork.Title)
+                
+      .artwork-container
+        h2 Post Artwork
+        form(id="postArtworkForm", action="/post-artwork", method="post")
+          .form-group
+            label(for="title") Title:
+            input(type="text", id="title", name="title", required)
+
+          .form-group
+            label(for="artist") Artist:
+            input(type="text", id="artist", name="artist", required)
+
+          .form-group
+            label(for="year") Year:
+            input(type="text", id="year", name="year", required)
+
+          .form-group
+            label(for="category") Category:
+            input(type="text", id="category", name="category", required)
+
+          .form-group
+            label(for="medium") Medium:
+            input(type="text", id="medium", name="medium", required)
+
+          .form-group
+            label(for="description") Description:
+            textarea(id="description", name="description", rows="4", required)
+
+          .form-group
+            label(for="poster") Poster URL:
+            input(type="text", id="poster", name="poster", required)
+
+          button(type="button", onclick="submitArtworkForm()") Post Artwork
+
+      script.
+    script.
+        //Sending Artworks
+        function submitArtworkForm() {
+            const xml = new XMLHttpRequest();
+            const form = document.getElementById('postArtworkForm');
+
+            const title = form.querySelector('[name="title"]').value;
+            const artist = form.querySelector('[name="artist"]').value;
+            const year = form.querySelector('[name="year"]').value;
+            const category = form.querySelector('[name="category"]').value;
+            const medium = form.querySelector('[name="medium"]').value;
+            const description = form.querySelector('[name="description"]').value;
+            const poster = form.querySelector('[name="poster"]').value;
+
+            // Create formData object
+            const formData = {
+                title: title,
+                artist: artist,
+                year: year,
+                category: category,
+                medium: medium,
+                description: description,
+                poster: poster
+            };
+            if(!title || !artist || !year || !category || !medium || !poster || !description){
+                alert("Fill in all Fields");
+            }
+            else{
+              xml.open('POST', "/post-artwork");
+              xml.setRequestHeader('Content-Type', 'application/json');
+
+              xml.onload = function() {
+              if (xml.status === 200) {
+                  alert("Artwork Posted Successfully!");
+              } else {
+                  console.error('Error posting artwork:', xml.statusText);
+              }
+              };
+
+              xml.send(JSON.stringify(formData));
+            }
+            
+        }
+        //Changes the users account type
+        function changeType(){
+            const xml = new XMLHttpRequest();
+            xml.open('GET', "/changeType");
+            xml.setRequestHeader('Content-Type', 'application/json');
+
+            xml.onload = function() {
+            if (xml.status === 200) {
+                alert("Artist Account");
+            } else {
+                console.error('Error posting artwork:', xml.statusText);
+            }
+            };
+
+            xml.send();
+        }
+
+
+
+
+        

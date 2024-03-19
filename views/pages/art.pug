@@ -1,0 +1,190 @@
+doctype html
+html
+  head
+    title Artwork Details
+    link(rel="stylesheet" href="../pages/styles.css")
+    style.
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(#87CEEB, #007bff); 
+  
+      }
+     
+      .artwork-details {
+        display: flex;
+        justify-content: center;
+        max-width: 2000px;
+        margin: 20px;
+        height: 80%;
+      }
+
+      .artwork-details .artwork-card {
+        text-align: center;
+        width: 500px;
+        margin: 10px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background: white;
+      }
+
+      .artwork-details img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+      a{
+        margin-right:20px;
+      }
+      p{
+        font-size:20px;
+      }
+      textarea{
+        width:100%;
+        height:20%;
+      }
+      button{
+        height:auto;
+        width:auto;
+      }
+
+
+  body
+    include ../partials/header.pug
+    .artwork-details
+      .artwork-card
+        h1= artwork.Title
+        img(src=artwork.Poster, alt=artwork.Title)
+        p Likes: #{artwork.Likes}
+        p Artist: #{artwork.Artist}
+        p Year: #{artwork.Year}
+        p Category: #{artwork.Category}
+        p Medium: #{artwork.Medium}
+        p Description: #{artwork.Description}
+       
+        button(type="like") Like
+        button(type="unlike") Unlike
+    
+      
+      .artwork-card
+        h2 Write a Review
+        textarea(id="reviewContent", name="reviewContent", rows="2",required)
+
+        button(type="submit") Submit Review
+
+        if(artwork.Reviews)
+            h2 Reviews 
+            each review in artwork.Reviews  
+                p=review
+        else  
+            p No Reviews Yet.
+
+
+      .artwork-card
+        h2 Artist Information
+
+        h1 #{artwork.Artist}
+        img(src=artwork.Poster, alt=artwork.Title)
+        h2 Description: Placeholder for any information about the artist, placeholder image for a potential icon
+        button(type="follow") Follow Artist
+        
+script.
+      
+          document.addEventListener('DOMContentLoaded', function() {
+            //Unlikes
+            const unlikeButton = document.querySelector('[type="unlike"]');
+            unlikeButton.addEventListener('click', function() {
+              const xml = new XMLHttpRequest();
+              const artworkId = window.location.pathname.split('/').pop();
+              xml.open('GET', "/artwork/" + artworkId + "/processUnlike");
+              xml.send(JSON.stringify({artworkId}));
+
+           
+              xml.onload = function() {
+                if (xml.status == 200) {
+                  location.reload();
+                } else {
+                  console.error('Error processing like:', xml.statusText);
+                }
+              };
+            });
+
+            //Likes
+            const likeButton = document.querySelector('[type="like"]');
+            likeButton.addEventListener('click', function() {
+              const xml = new XMLHttpRequest();
+              const artworkId = window.location.pathname.split('/').pop();
+              xml.open('GET', "/artwork/" + artworkId + "/processLike");
+              xml.send(JSON.stringify({artworkId}));
+
+           
+              xml.onload = function() {
+                if (xml.status == 200) {
+                  location.reload();
+                } else {
+                  console.error('Error processing like:', xml.statusText);
+                }
+              };
+            });
+
+            //Submit Review
+            const submitReviewButton = document.querySelector('[type="submit"]');
+            const reviewContentTextarea = document.getElementById('reviewContent');
+
+            submitReviewButton.addEventListener('click', function() {
+                const xml = new XMLHttpRequest();
+                const artworkId = window.location.pathname.split('/').pop();
+                const reviewContent = reviewContentTextarea.value;
+
+                xml.open('POST', "/artwork/" + artworkId + "/review");
+                xml.setRequestHeader('Content-Type', 'application/json');
+
+                xml.onload = function() {
+                    if (xml.status === 200) {
+                        location.reload();
+                        alert("Review Submitted!");
+                    } else {
+                    console.error('Error submitting review:', xml.statusText);
+                    }
+                };
+
+                xml.send(JSON.stringify({ reviewContent }));
+                
+                // Clear the textarea after submitting the review
+                reviewContentTextarea.value = '';
+            });
+
+    
+
+            //Follow Artist
+            const followArtistButton = document.querySelector('[type="follow"]');
+            followArtistButton.addEventListener('click', function() {
+                const xml = new XMLHttpRequest();
+                const artworkId = window.location.pathname.split('/').pop();
+
+                xml.open('GET', "/artwork/" + artworkId + "/follow");
+                xml.setRequestHeader('Content-Type', 'application/json');
+
+                xml.onload = function() {
+                    if (xml.status === 200) {
+                        alert("Artist Followed!");
+                        location.reload();
+                    } else {
+                    console.error('Error submitting review:', xml.statusText);
+                    }
+                };
+
+                xml.send();
+                
+      
+            });
+
+          });

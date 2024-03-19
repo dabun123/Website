@@ -1,0 +1,25 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    title Accounts
+    style
+      include ../pages/styles.css
+    script(src="registration.js" defer)
+  body
+    form
+      h1 User Registration
+      div
+        label(for="fullName") Full Name
+        input(type="text" id="fullName" name="fullName")
+      div
+        label(for="password") Password
+        input(type="password" id="password" name="password")
+      label(for="birthday") Birthday:
+      input(type="date" id="birthday" name="birthday")
+      div
+        label Already have an account? 
+        a(href="/login") Login
+      div#formErrors
+      div
+        input(type="submit" id="submit" value="Register")

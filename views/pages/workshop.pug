@@ -1,0 +1,134 @@
+doctype html
+html
+  head
+    title Workshop Page
+  style.
+      body {
+        background: #87CEEB; 
+        font-family: 'Arial', sans-serif; 
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        display: center;
+      }
+      #header a {
+        margin-right: 20px;
+      }
+      .gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 20px; 
+      }
+
+      .artwork-container {
+        width: 300px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        background-color: #f0f0f0;
+        color: black;
+        display: center;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .artwork-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      a {
+        text-align: center;
+      }
+
+      form {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      input {
+        margin-right: 10px;
+      }
+      img{
+        width:50%;
+        height:50%;
+      }
+      label{
+        display: block;
+        margin-bottom: 5px;
+      }
+   
+          
+  body
+    header
+      h1 Welcome to the Workshop Page
+    main
+        include ../partials/header.pug
+        h1 Create an Event
+        .artwork-container
+            form(action="/create-event", method="post")
+            label(for="eventName") Event Name:
+            input(type="text", id="eventName", name="eventName", required)
+
+            label(for="eventDate") Event Date:
+            input(type="date", id="eventDate", name="eventDate", required)
+
+            label(for="eventDescription") Event Description:
+            textarea(id="eventDescription", name="eventDescription", rows="2", required)
+            p 
+            button(type="submit", onclick="createNewEvent()") Create Event
+
+
+        h1 Enroll in an Event
+
+        if(events)
+            each event in events
+                .artwork-container
+                    h3= event.name
+                    p Date: #{event.date}
+                    p Description: #{event.description}
+                    button(type="button", onclick=`enrollEvent()`) Enroll
+        else 
+            h3 There are no events
+
+  script.
+    //Creates a new event
+    function createNewEvent() {
+            const xml = new XMLHttpRequest();
+            const name = document.getElementById('eventName').value;
+            const date = document.getElementById('eventDate').value;
+            const description = document.getElementById('eventDescription').value;
+            
+            const formData = {
+               name:name,
+               date:date,
+               description:description,
+            };
+
+            xml.open('POST', "/createEvent");
+            xml.setRequestHeader('Content-Type', 'application/json');
+
+            xml.onload = function() {
+            if (xml.status === 200) {
+                alert("Artwork Posted Successfully!");
+                location.reload();
+            } else {
+                console.error('Error posting artwork:', xml.statusText);
+            }
+            };
+
+            xml.send(JSON.stringify(formData));
+    }
+   function enrollEvent() {
+      alert("Enrolled in event");
+    }

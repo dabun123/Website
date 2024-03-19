@@ -1,0 +1,88 @@
+doctype html
+html
+  head
+    title Artwork Gallery
+    link(rel="stylesheet" href="../pages/styles.css")
+    script(src="/registration.js" defer)
+    style.
+      body {
+        background: linear-gradient(to bottom right, #87CEEB, #007bff); 
+        font-family: 'Arial', sans-serif; 
+        margin: 0;
+        padding: 0;
+      }
+      
+      #header a {
+       margin-right: 20px; 
+      }
+      a{
+        text-align:center;
+      }
+      .gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .artwork-container {
+        width: 300px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        background-color: #f0f0f0; 
+        color: black; 
+      }
+
+      .artwork-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      h1{
+        text-align: center;
+      }
+
+      a{
+        text-align: center;
+      }
+
+      form {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      input {
+        margin-right: 10px;
+      }
+
+  body
+    include ../partials/header.pug
+    h1 Artwork Gallery
+
+    form(action="/search", method="GET")
+      input(type="text", name="title", placeholder="Search by title")
+      input(type="text", name="artist", placeholder="Search by artist")
+      input(type="text", name="category", placeholder="Search by category")
+      button(type="submit") Search
+
+    //Goes through all the data and displays
+    each artworksArray in data
+      .gallery
+        each artwork in artworksArray
+          .artwork-container
+            a(href=`/artwork/${artwork._id}`) 
+              img(src=artwork.Poster, alt=artwork.Title)
+            h2= artwork.Title
+            p Artist: #{artwork.Artist}
+            p Year: #{artwork.Year}
+            p Category: #{artwork.Category}
+            p Medium: #{artwork.Medium}
+            p Description: #{artwork.Description}
+    a(href="/more-artworks") 
+      h1 View More
