@@ -1,0 +1,13 @@
+Description:
+Open Gallery Website that displays, adds and posts artwork 
+
+Instructions: 
+Requires a node_modules folder, type
+npm install
+in the terminal
+
+Run the database initialiser, then server 
+Clicking the Local Host Link to access the website on your local computer
+
+Link to Website Demo: 
+https://youtu.be/sJ6fzw8FpwU
